@@ -3,7 +3,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function UserPage() {
-  const url = "http://localhost:3000/users";
+  const url = "http://127.0.0.1:8000/users/index";
+
+  function getCookie(name) {
+    const value = document.cookie
+    const parts = value.split(name)
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift()
+    }
+  }
+
+  const csrfToken = getCookie('XSRF-TOKEN=');
 
   let navigate = useNavigate();
 
@@ -20,7 +30,7 @@ export default function UserPage() {
     email: "",
     password: "",
   });
-
+  let customerId;
   const [readOnly, setReadOnly] = useState(true);
 
   const handleChange = (e) => {
@@ -31,18 +41,13 @@ export default function UserPage() {
   };
 
   const loadData = async () => {
-    const users = await axios.get(url,
-      {headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      }},{ accountNumber: user.customerAccountNo,
-      accountHolder: user.customerName,
-      accountType: user.customerAccountType,
-      contact: user.customerContact,
-      email: user.customerEmail,
-      password: user.customerPin,
-      userId: user.customerId}).then((res) => {
-      const mainUser = res.data[index];
+    const users = await axios.post(url, {customerId : index},
+    {headers: {
+      'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
+    },
+   // withCredentials: true
+     }).then((res) => {
+      const mainUser = res.data[0];
 
       setUser({
         ...user,

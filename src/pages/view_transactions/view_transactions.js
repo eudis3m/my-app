@@ -3,7 +3,21 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function ViewTransactions() {
-  const url = "http://localhost:8000/users";
+  const url = "http://127.0.0.1:8000/customertransaction/CustomerIndex";
+  const [login, setLogin] = useState({
+    userId: "",
+    password: "",
+  });
+
+  function getCookie(name) {
+    const value = document.cookie
+    const parts = value.split(name)
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift()
+    }
+  }
+
+  const csrfToken = getCookie('XSRF-TOKEN=');
 
   let navigate = useNavigate();
 
@@ -18,13 +32,16 @@ export default function ViewTransactions() {
   };
 
   const transactions = async () => {
-    const datas = await axios.get(url,{headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    }
-  });
-    const userTransactions = datas.data[index].customerTransactions;
-    setTransaction(userTransactions);
+    /*const token = await axios.get
+    ('http://127.0.0.1:8000/').then((res) =>{*/
+    const datas =  await axios.post(url, {customerId : index},
+      /*{headers: {
+        'cache-control': "no-cache, private",
+        'Content-Type':'application/json;charset=UTF-8',
+          }}*/)
+     // withCredentials: true
+     const userTransactions = datas.data.customerTransactions;
+     setTransaction(userTransactions);
   };
 
   useEffect(() => {

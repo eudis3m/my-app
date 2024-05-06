@@ -1,19 +1,42 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios, { formToJSON } from "axios";
+import React, {useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 
 export default function LoginPage() {
-  const url = "http://localhost:8000/users";
+  const url = "http://127.0.0.1:8000/users/show";
   const [login, setLogin] = useState({
     userId: "",
     password: "",
   });
+
+
+  function getCookie(name) {
+    const value = document.cookie
+    const parts = value.split(name)
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift()
+    }
+  }
   
-  const data = { customerId: login.userId, customerPin: login.password }
+  const loginToken = () => {
+    axios.get(url, {
+      withCredentials: true
+    })
+  }
+    const csrfToken = getCookie('XSRF-TOKEN=');
+
+    let { index } = useParams();
+
+    index = csrfToken;
+  
   const [invalid, setInvalid] = useState("d-none");
 
   let navigate = useNavigate();
+  let customerId;
+  let  customerPin;
+  const data = [{customerId : login.userId, customerPin : login.password }]
 
   const handleChange = (e) => {
     setLogin({
@@ -22,23 +45,20 @@ export default function LoginPage() {
     });
     setInvalid("d-none");
   };
-
   const checkLogin = async () => {
-    debugger;
-    const loginDetails = await axios
-      .get(url,{
+    const loginDetails =  await axios.post
+      (url, {customerId : login.userId, customerPin : login.password },{
         headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:3000"',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Methods': 'PUT, POST, DELETE, GET, OPTIONS',
-          'Access-Control-Allow-Headers':'Accept, Authorization, Content-Type'
-        }
-      },{
-        customerId: login.userId, customerPin: login.password 
-      })
+          'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
+          //'X-XSRF-TOKEN': res.headers('X-XSRF-TOKEN')
+        },
+       // withCredentials: true
+
+  })
       .then((res) => {
         let userIndex;
         const allDatas = res.data;
+       // res.cookie('token', accessToken, { sameSite: x, secure: x })
         const userData = allDatas.find((user, index) => {
           userIndex = index;
           return (
@@ -47,12 +67,13 @@ export default function LoginPage() {
           );
         });
         if (userData) {
-          navigate(`/account/${userIndex}`);
+          navigate(`/account/${login.userId}`);
         } else {
           setInvalid("d-block");
         }
-      })
+   }) 
       .catch((err) => console.log(err));
+  
   };
 
   return (
