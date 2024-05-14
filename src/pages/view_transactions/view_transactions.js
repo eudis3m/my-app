@@ -75,7 +75,9 @@ export default function ViewTransactions() {
         </tbody>
       </table>
       <div>
-        <button className="btn btn-success ">New Transaction</button>
+        <button className="btn btn-success "
+        onClick={() => navigate(`/amount/${index}`)}
+        >New Transaction</button>
         <button
           className="btn btn-secondary m-5"
           onClick={() => navigate(`/account/${index}`)}

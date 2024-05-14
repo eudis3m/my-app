@@ -29,6 +29,9 @@ export default function UserPage() {
     contact: "",
     email: "",
     password: "",
+    customerPan: "",
+    customerAadhar: "",
+    customerAccountBalance: ""
   });
   let customerId;
   const [readOnly, setReadOnly] = useState(true);
@@ -54,10 +57,13 @@ export default function UserPage() {
         accountNumber: mainUser.customerAccountNo,
         accountHolder: mainUser.customerName,
         accountType: mainUser.customerAccountType,
-        contact: mainUser.customerContact,
+        contact: mainUser.customerContac,
         email: mainUser.customerEmail,
         password: mainUser.customerPin,
         userId: mainUser.customerId,
+        customerAadhar: mainUser.customerAadhar,
+        customerAccountBalance: mainUser.customerAccountBalance,
+        customerPan: mainUser.customerPan
       });
     });
   };
@@ -69,13 +75,47 @@ export default function UserPage() {
   const handleClick = (e) => {
     setReadOnly(false);
     inputRef.current.focus();
+  }
+
+  const handleSave = (e) => {
+    //setReadOnly(false);
+    //inputRef.current.focus();
+    axios.put('http://127.0.0.1:8000/users/update', {customerId : index,
+    'customerAccountNo': user.accountNumber,
+    'customerName': user.accountHolder,
+    'customerAccountType': user.accountType,
+    'customerContac': user.contact,
+    'customerEmail': user.email,
+    'customerAadhar': user.customerAadhar,
+    'customerAccountBalance': user.customerAccountBalance,
+    'customerPin': user.password,
+    'customerPan': user.customerPan
+    },
+    {headers: {
+      'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
+    },
+   // withCredentials: true
+     }).then((res) => {
+     // const mainUser = res.data[0];
+     alert(
+      user.accountNumber+ " update with sucess "
+    );
+     })
   };
 
   const handleDelete =() => {
     alert(
       "Are you sure you want to delete with account no " + user.accountNumber
     );
-    navigate("/");
+     axios.delete('http://127.0.0.1:8000/users/delete', {customerId : index},
+      {headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
+      },
+     // withCredentials: true
+       }).then((res) => {
+       // const mainUser = res.data[0];
+    navigate(`/transactions/${index}`);
+       })
   };
 
   return (
@@ -227,6 +267,13 @@ export default function UserPage() {
               onClick={handleDelete}
             >
               Delete account
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={handleSave}
+            >
+              Update account
             </button>
           </div>
         </form>
