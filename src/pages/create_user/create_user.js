@@ -90,12 +90,12 @@ export default function UserPage() {
     'customerAccountBalance': user.customerAccountBalance,
     'customerPin': user.password,
     'customerPan': user.customerPan
-    },
+    }/*,
     {headers: {
       'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
     },
    // withCredentials: true
-     }).then((res) => {
+     }*/).then((res) => {
      // const mainUser = res.data[0];
      alert(
       user.accountNumber+ " update with sucess "

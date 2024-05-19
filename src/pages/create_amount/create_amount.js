@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function Create_Amount() {
-  const url = "http://127.0.0.1:8000/CustomerCreate";
+  const url = "http://127.0.0.1:8000/customerCreate";
 
   function getCookie(name) {
     const value = document.cookie
@@ -27,7 +27,7 @@ export default function Create_Amount() {
     customerId: "",
     transactionId: "",
     transactionDate: "",
-    transactionAmount: "",
+    transactionAmount: Number(),
     transactionType: ""
   });
   let customerId;
@@ -41,7 +41,7 @@ export default function Create_Amount() {
     });
   };
 
-  const loadData = async () => {
+  /*const loadData = async () => {
     const users =  axios.post('http://127.0.0.1:8000/customertransaction/CustomerIndex', {customerId : index},
     {headers: {
       'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
@@ -58,7 +58,7 @@ export default function Create_Amount() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, []);*/
 
   const handleClick = (e) => {
     setReadOnly(false);
@@ -69,13 +69,12 @@ export default function Create_Amount() {
     const users =  axios.post(url, {customerId : index, 'transactionId': amount.transactionId,'transactionDate': amount.transactionDate,
     'transactionAmount': amount.transactionAmount,'transactionType': amount.transactionType
   },
-  {headers: {
-    'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
-  },
- // withCredentials: true
-   }).then((res) => {
+  ).then((res) => {
     //const mainUser = res.data[0];
-
+    amount = null;
+    alert(
+      "Created with sucess" + amount.transactionId
+    );
     
   });
   };
@@ -84,13 +83,13 @@ export default function Create_Amount() {
     /*alert(
       "Are you sure you want to delete with account no " + amount.accountNumber
     );*/
-    const users =  axios.delete('http://127.0.0.1:8000/CustomerDelete', {customerId : index
-  },
+    const users =  axios.delete('http://127.0.0.1:8000/customerDelete', {'transactionId': amount.transactionId
+  }/*,
   {headers: {
     'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
   },
   withCredentials: true
-   }).then((res) => {
+   }*/).then((res) => {
     //const mainUser = res.data[0];
 
     navigate(`/transactions/${index}`);
@@ -114,13 +113,13 @@ export default function Create_Amount() {
       <div id="about-areas" className="row col-auto">
         <form className="row g-3">
           <div className="col-12 mt-lg-3">
-            <label htmlFor="customerId" className="form-label">
+            <label htmlFor="inputState" className="form-label">
               User ID
             </label>
             <input
               type="number"
               className="form-control"
-              id="customerId"
+              id="inputState"
               name="accountNumber"
               value={index}
               onChange={handleChange}
@@ -129,13 +128,13 @@ export default function Create_Amount() {
             />
           </div>
           <div className="col-12 mt-lg-3">
-            <label htmlFor="transactionId" className="form-label">
+            <label htmlFor="inputState" className="form-label">
             transaction Id
             </label>
             <input
               type="number"
               className="form-control"
-              id="transactionId"
+              id="inputState"
               name="transactionId"
               value={amount.transactionId}
              onChange={handleChange}
@@ -145,13 +144,13 @@ export default function Create_Amount() {
             />
           </div>
           <div className="col-12 mt-lg-4">
-            <label htmlFor="transactionDate" className="form-label">
+            <label htmlFor="inputState" className="form-label">
             transaction Date
             </label>
             <input
               type="date"
               className="form-control"
-              id="transactionDate"
+              id="inputState"
               name="transactionDate"
               value={amount.transactionDate}
               onChange={handleChange}
@@ -160,13 +159,13 @@ export default function Create_Amount() {
             />
           </div>
           <div className="col-md-6 mt-lg-4">
-            <label htmlFor="transactionAmount" className="form-label">
+            <label htmlFor="inputState" className="form-label">
             transaction Amount
             </label>
             <input
               type="number"
               className="form-control"
-              id="transactionAmount"
+              id="inputState"
               name="transactionAmount"
               value={amount.transactionAmount}
              onChange={handleChange}
@@ -177,17 +176,17 @@ export default function Create_Amount() {
           </div>
 
           <div className="col-md-6 mt-lg-4">
-            <label htmlFor="transactionType" className="form-label">
+            <label htmlFor="inputState" className="form-label">
             transaction Type
             </label>
             <select
-              id="transactionType"
+              id="inputState"
               className="form-select"
               name="transactionType"
               onChange={handleChange}
               value={amount.transactionType}
-              readOnly={readOnly}
-              ref={inputRef}
+              //readOnly={readOnly}
+              //ref={inputRef}
             >
               <option value="debit" disabled={readOnly}>
               debit

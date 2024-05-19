@@ -47,14 +47,14 @@ export default function LoginPage() {
   };
   const checkLogin = async () => {
     const loginDetails =  await axios.post
-      (url, {customerId : login.userId, customerPin : login.password },{
+      (url, {customerId : login.userId, customerPin : login.password }/*,{
         headers: {
           'X-XSRF-TOKEN': decodeURIComponent(csrfToken)
           //'X-XSRF-TOKEN': res.headers('X-XSRF-TOKEN')
         },
        // withCredentials: true
 
-  })
+  }*/)
       .then((res) => {
         let userIndex;
         const allDatas = res.data;
