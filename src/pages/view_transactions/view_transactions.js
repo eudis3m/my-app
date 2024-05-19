@@ -7,10 +7,15 @@ export default function ViewTransactions() {
   const [login, setLogin] = useState({
     userId: "",
     password: "",
-    dateStart: "",
-    dateFinish: ""
   });
 
+  const [date] =  useState({
+    dateStart: new Date(),
+    dateFinish: new Date()
+  })
+
+  const dateStart = date.dateStart;
+  const dateFinish= date.dateFinish;
   function getCookie(name) {
     const value = document.cookie
     const parts = value.split(name)
@@ -32,7 +37,10 @@ export default function ViewTransactions() {
   const [transaction, setTransaction] = useState([]);
 
   const handleChange = (e) => {
-    setFilterType(e.target.value);
+   // setFilterType(e.target.value);
+   setLogin({
+    [e.target.name]: e.target.value,
+  });
   };
 
   const [readOnly, setReadOnly] = useState(true);
@@ -46,18 +54,28 @@ export default function ViewTransactions() {
      const userTransactions = datas.data.customerTransactions;
      setTransaction(userTransactions);
   };
-  function transactionsDate () {
+  const transactionsDate = (date) =>{
     /*const token = await axios.get
     ('http://127.0.0.1:8000/').then((res) =>{*/
+    debugger;
     const datas =  axios.post('http://127.0.0.1:8000/customerTransaction/date', 
-      {'dateStart' : login.dateStart, 'dateStart' : login.dateFinish},
-        )
-     
+      {'customerId': index ,'dateStart' : dateStart, 'dateFinish' : dateFinish},
+        ).then((res) => {
+debugger;
+     if(res.data.customerTransactions > 0){
      const userTransactions = datas.data.customerTransactions;
      setTransaction(userTransactions);
+     }
+     else{
+      alert(
+        "Not transaction this period to user " + index
+      );
+     }
+  })
   };
   useEffect(() => {
     transactions();
+    //transactionsDate();
   }, []);
 
   return (
@@ -77,9 +95,7 @@ export default function ViewTransactions() {
               className="form-control"
               id="inputState"
               name="dateStart"
-              value={login.dateStart}
-              onChange={handleChange}
-              ref={inputRef}
+              defaultValue={dateStart}
             />
         </div>
 
@@ -89,20 +105,18 @@ export default function ViewTransactions() {
               className="form-control"
               id="inputState"
               name="dateFinish"
-              value={login.dateFinish}
+              defaultValue={dateFinish}
               onChange={handleChange}
+              onInput={transactionsDate}
             />
-        <div>  
-        {(() => {
+                 {(() => {
         if (login.dateFinish != null) {
-          return(
-            <input 
-            onClick={() => this.transactionsDate()}
-            />
+          return (
+            <a onInput={transactionsDate}/>
+          
           )
-        }}
-       ) }
-       </div>  
+        } 
+      })()}   
         </div>
         </div>
       <table className="table text-center w-75 m-auto mt-3 shadow border ">
@@ -110,7 +124,6 @@ export default function ViewTransactions() {
           <tr>
             <th scope="col">Transaction ID</th>
             <th scope="col">Date</th>
-
             <th scope="col">Type</th>
             <th scope="col">Amount</th>
           </tr>
