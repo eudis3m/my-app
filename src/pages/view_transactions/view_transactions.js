@@ -7,15 +7,18 @@ export default function ViewTransactions() {
   const [login, setLogin] = useState({
     userId: "",
     password: "",
+    totaly : ''
   });
 
   const [date] =  useState({
-    dateStart: new Date(),
-    dateFinish: new Date()
+    dateStart: '',
+    dateFinish: ''
   })
 
-  const dateStart = date.dateStart;
-  const dateFinish= date.dateFinish;
+  const dateStart = "";
+  const dateFinish= "";
+  let totaly = '';
+
   function getCookie(name) {
     const value = document.cookie
     const parts = value.split(name)
@@ -36,14 +39,34 @@ export default function ViewTransactions() {
 
   const [transaction, setTransaction] = useState([]);
 
-  const handleChange = (e) => {
-   // setFilterType(e.target.value);
-   setLogin({
-    [e.target.name]: e.target.value,
+  const [transactionTotaly, setTotaly] = useState({
+    dateStart: "",
+    dateFinish: "",
+    totaly: ""
   });
+
+  const handle = (e) => {
+    setTotaly({
+      ...transactionTotaly,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const [readOnly, setReadOnly] = useState(true);
+  const handleChange = (e) => {
+   setFilterType(e.target.value);
+  /* setLogin({
+    [e.target.name]: e.target.value,
+  });]8*/
+  };
+
+  const [readOnly, setReadOnly] = useState(false);
+
+  
+
+  const handleClick = (e) => {
+    setReadOnly(false);
+    inputRef.current.focus();
+  }
 
   const transactions = async () => {
     /*const token = await axios.get
@@ -51,20 +74,32 @@ export default function ViewTransactions() {
     const datas =  await axios.post(url, {customerId : index},
         )
      
-     const userTransactions = datas.data.customerTransactions;
+     const userTransactions = datas.data;
+     const result = datas.data[0].totaly;
      setTransaction(userTransactions);
+     debugger;
+     setTotaly({
+      ...transactionTotaly,
+      totaly: result
+     })
   };
   const transactionsDate = (date) =>{
     /*const token = await axios.get
     ('http://127.0.0.1:8000/').then((res) =>{*/
     debugger;
     const datas =  axios.post('http://127.0.0.1:8000/customerTransaction/date', 
-      {'customerId': index ,'dateStart' : dateStart, 'dateFinish' : dateFinish},
+      {'customerId': index ,'dateStart' : transactionTotaly.dateStart, 'dateFinish' : transactionTotaly.dateFinish},
         ).then((res) => {
 debugger;
-     if(res.data.customerTransactions > 0){
-     const userTransactions = datas.data.customerTransactions;
-     setTransaction(userTransactions);
+     if(res.data[0] != null){
+     const userTransactions = res.data;
+     const result = res.data[0].totaly;
+    setTransaction(userTransactions);
+    setTotaly({
+      ...transactionTotaly,
+      totaly: result
+     })
+     
      }
      else{
       alert(
@@ -95,28 +130,36 @@ debugger;
               className="form-control"
               id="inputState"
               name="dateStart"
-              defaultValue={dateStart}
+              value={transactionTotaly.dateStart}
+              onChange={handle}
+              readOnly={false}
+              ref={inputRef}
             />
         </div>
-
         <div class="p-2">
         <input
               type="date"
               className="form-control"
               id="inputState"
               name="dateFinish"
-              defaultValue={dateFinish}
-              onChange={handleChange}
+              value={transactionTotaly.dateFinish}
+              onChange={handle}
+              readOnly={false}
               onInput={transactionsDate}
-            />
-                 {(() => {
-        if (login.dateFinish != null) {
-          return (
-            <a onInput={transactionsDate}/>
-          
-          )
-        } 
-      })()}   
+            />  
+        </div>
+        <div class="p-2">
+        <input
+              type="number"
+              className="form-control"
+              placeholder="totaly"
+              id="inputState"
+              name="totaly"
+              value={transactionTotaly.totaly}
+              onChange={handleChange}
+              readOnly={readOnly}
+              ref={inputRef}
+            />  
         </div>
         </div>
       <table className="table text-center w-75 m-auto mt-3 shadow border ">
@@ -149,7 +192,7 @@ debugger;
   );
 }
 
-const TableDatas = ({ data, filter }) => {
+const TableDatas = ({ data, filter}) => {
   return filter == data.transactionType ? (
     <tr>
       <th scope="row">{data.transactionId}</th>

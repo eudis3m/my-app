@@ -71,7 +71,11 @@ export default function Create_Amount() {
   },
   ).then((res) => {
     //const mainUser = res.data[0];
-    amount = null;
+    //amount = null;
+    setTransaction({
+      ...amount,
+      [e.target.name]: e.target.value,
+    });
     alert(
       "Created with sucess" + amount.transactionId
     );
@@ -185,8 +189,8 @@ export default function Create_Amount() {
               name="transactionType"
               onChange={handleChange}
               value={amount.transactionType}
-              //readOnly={readOnly}
-              //ref={inputRef}
+              readOnly={readOnly}
+              ref={inputRef}
             >
               <option value="debit" disabled={readOnly}>
               debit
