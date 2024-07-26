@@ -73,38 +73,38 @@ export default function ViewTransactions() {
     ('http://127.0.0.1:8000/').then((res) =>{*/
     const datas =  await axios.post(url, {customerId : index},
         )
-     
-     const userTransactions = datas.data;
-    // const result = datas.data[0].totaly;
-    let count = datas.data.length;
-    debugger
-    for(let i =0;i<=count.length; i++){
-    const result =+ datas.data[i].transactionAmount;
-    debugger;
-     setTransaction(userTransactions);
-     //debugger;
+    const userTransactions = datas.data;
+    const count = datas.data;
+    let result = [];
+    let teste = 0;
+    for(let i =0;i<count.length; i++){
+    result[i] = count[i].transactionAmount;
+    teste += result[i];
      setTotaly({
       ...transactionTotaly,
-      totaly: result
+      totaly: teste
      })
     }
-  };
+    setTransaction(userTransactions);
+ };
   const transactionsDate = (date) =>{
-    /*const token = await axios.get
-    ('http://127.0.0.1:8000/').then((res) =>{*/
-    //debugger;
     const datas =  axios.post('http://127.0.0.1:8000/customerTransaction/date', 
       {'customerId': index ,'dateStart' : transactionTotaly.dateStart, 'dateFinish' : transactionTotaly.dateFinish},
         ).then((res) => {
-//debugger;
      if(res.data[0] != null){
      const userTransactions = res.data;
-     const result =+ res.data[0].transactionAmount;
-    setTransaction(userTransactions);
-    setTotaly({
-      ...transactionTotaly,
-      totaly: result
-     })
+     const count = res.data;
+     let result = [];
+     let teste = 0;
+     for(let i =0;i<count.length; i++){
+     result[i] = count[i].transactionAmount;
+     teste += result[i];
+      setTotaly({
+       ...transactionTotaly,
+       totaly: teste
+      })
+     }
+     setTransaction(userTransactions);
      
      }
      else{
